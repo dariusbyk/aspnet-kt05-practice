@@ -1,0 +1,98 @@
+@baseUrl = http://localhost:5000
+
+### Запросы выполняются сверху вниз после нового запуска приложения.
+### Создать студента — 201
+POST {{baseUrl}}/students
+Content-Type: application/json
+
+{"name":"Анна","age":20}
+
+### Список студентов — 200
+GET {{baseUrl}}/students
+
+### Студент по ID — 200
+GET {{baseUrl}}/students/1
+
+### Изменить студента — 204
+PUT {{baseUrl}}/students/1
+Content-Type: application/json
+
+{"name":"Анна Иванова","age":21}
+
+### Проверить изменения
+GET {{baseUrl}}/students/1
+
+### Удалить — 204
+DELETE {{baseUrl}}/students/1
+
+### Проверить удаление — 404
+GET {{baseUrl}}/students/1
+
+### Создать задачу — 201, статус новая
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{"title":"Сделать КТ","description":"Проверить API"}
+
+### Все задачи
+GET {{baseUrl}}/tasks
+
+### Изменить статус — 204
+PUT {{baseUrl}}/tasks/1/status
+Content-Type: application/json
+
+{"status":"в работе"}
+
+### Фильтр: в работе — созданная задача
+GET {{baseUrl}}/tasks?status=%D0%B2%20%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B5
+
+### Фильтр: новая — пустой список
+GET {{baseUrl}}/tasks?status=%D0%BD%D0%BE%D0%B2%D0%B0%D1%8F
+
+### Удалить задачу — 204
+DELETE {{baseUrl}}/tasks/1
+
+### Проверить удаление — пустой список
+GET {{baseUrl}}/tasks
+
+### Доступные ресурсы — три ресурса
+GET {{baseUrl}}/resources/available?start=2026-11-01T12:00:00&end=2026-11-01T14:00:00
+
+### Забронировать номер — 201, ID 1
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{"resourceId":1,"start":"2026-11-01T12:00:00","end":"2026-11-01T14:00:00"}
+
+### Пересечение — 409
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{"resourceId":1,"start":"2026-11-01T13:00:00","end":"2026-11-01T15:00:00"}
+
+### Номер 101 отсутствует среди доступных
+GET {{baseUrl}}/resources/available?start=2026-11-01T12:00:00&end=2026-11-01T14:00:00
+
+### Изменить время — 204
+PUT {{baseUrl}}/bookings/1
+Content-Type: application/json
+
+{"resourceId":1,"start":"2026-11-01T15:00:00","end":"2026-11-01T17:00:00"}
+
+### Старое время свободно — три ресурса
+GET {{baseUrl}}/resources/available?start=2026-11-01T12:00:00&end=2026-11-01T14:00:00
+
+### Новое время занято — два ресурса
+GET {{baseUrl}}/resources/available?start=2026-11-01T15:00:00&end=2026-11-01T17:00:00
+
+### Отменить — 204
+DELETE {{baseUrl}}/bookings/1
+
+### После отмены все ресурсы доступны
+GET {{baseUrl}}/resources/available?start=2026-11-01T15:00:00&end=2026-11-01T17:00:00
+
+### Другой тип ресурса: забронировать стол — 201
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{"resourceId":3,"start":"2026-11-01T12:00:00","end":"2026-11-01T14:00:00"}
